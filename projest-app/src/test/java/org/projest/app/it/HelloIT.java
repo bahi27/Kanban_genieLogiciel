@@ -1,40 +1,51 @@
 package org.projest.app.it;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.stream.Collectors;
-
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 
-public class HelloIT{
-	
-	private static String port;
-	
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class HelloIT {
+
+	public static WebDriver driver;
+	private static String host, port;
+
 	@BeforeAll
-	public static void findPort() {
+	public static void setupWebDriver() {
+		if (driver != null) return;
+		host = System.getProperty("host", "localhost");
 		port = System.getProperty("servlet.port", "8080");
+		WebDriverManager.firefoxdriver().setup();
+		FirefoxOptions options = new FirefoxOptions();
+		if (System.getProperty("headless") != null) {
+			options.addArguments("-headless");
+		}
+		driver = new FirefoxDriver(options);
 	}
 
-	@Test
-	public void hello() throws IOException {
-		String testName = "testname";
-		HttpURLConnection connection = (HttpURLConnection)new URL("http://localhost:" + port +"/hello?name="+testName).openConnection();
-		{
-			connection.connect();
-			assertEquals(200, connection.getResponseCode());
-			
-			try (InputStream in = connection.getInputStream()) {
-				String output = new BufferedReader(new InputStreamReader(in)).lines().collect(Collectors.joining("\n"));
-				assertTrue(output.contains(testName), "Sent name not found in page  with source \n" + output);
-			}
+	@AfterAll
+	public static void shutdownWebDriver() {
+		if (driver != null) {
+			driver.quit();
+			driver = null;
 		}
 	}
 
+	public static String getBaseUrl() {
+		return "http://" + host + ":" + port + "/";
+	}
+
+	@Test
+	public void testName() {
+		String testName = "testname";
+		driver.get(getBaseUrl() + "hello?name=" + testName);
+		assertTrue(driver.getPageSource().contains(testName),
+				"Sent name not found in page");
+	}
 }
