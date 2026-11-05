@@ -5,7 +5,7 @@ import fr.uha.ensisa.gl.test.Issue ;
 public class RepoFactoryMem implements RepoFactory {
 
 	public final IssueRepo issueRepo = new IssueRepoMem() ;
-	public IssueRepo getIssueRep() {
+	public IssueRepo getIssueRepo() {
 		return this.issueRepo ;
 	}
 }

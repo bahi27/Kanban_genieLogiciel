@@ -1,5 +1,6 @@
 package org.projest.app.config;
-
+import fr.uha.ensisa.gl.repo.RepoFactory;
+import fr.uha.ensisa.gl.mem.RepoFactoryMem;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,10 @@ public class MvcConfiguration implements WebMvcConfigurer {
 		resolver.setTemplateEngine(springTemplateEngine());
 		return resolver;
 	}
-
+	@Bean
+	public RepoFactory getRepo() {
+		return new RepoFactoryMem();
+	}
 	@Bean
 	public SpringTemplateEngine springTemplateEngine() {
 	  SpringTemplateEngine engine = new SpringTemplateEngine();
