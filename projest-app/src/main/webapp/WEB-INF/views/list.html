@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Issues list</title>
+</head>
+<body>
+<ul id="issues">
+	<li th:each="issue : ${issues}" class="issue_row"
+		th:id="${'issue_' + issue.id}">[[${issue.description}]]</li>
+</ul>
+</body>
+</html>

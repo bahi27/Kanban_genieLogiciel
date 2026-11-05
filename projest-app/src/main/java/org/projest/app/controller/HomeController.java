@@ -22,4 +22,10 @@ public class HomeController {
 		ret.addObject("name", name);
 		return ret;
 	}
+	@RequestMapping(value = "/list")
+	public ModelAndView list() {
+		ModelAndView ret = new ModelAndView("list");                  // 1
+		ret.addObject("issues", repo.getIssueRepo().findAll());                      // 2
+		return ret;
+	}
 }

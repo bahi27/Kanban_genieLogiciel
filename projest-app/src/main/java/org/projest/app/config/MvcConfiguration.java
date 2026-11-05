@@ -2,7 +2,7 @@ package org.projest.app.config;
 import fr.uha.ensisa.gl.repo.RepoFactory;
 import fr.uha.ensisa.gl.mem.RepoFactoryMem;
 import java.util.concurrent.TimeUnit;
-
+import fr.uha.ensisa.gl.test.Issue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +36,9 @@ public class MvcConfiguration implements WebMvcConfigurer {
 	}
 	@Bean
 	public RepoFactory getRepo() {
-		return new RepoFactoryMem();
+		RepoFactory factory = new RepoFactoryMem();
+		factory.getIssueRepo().persist(new Issue(1L, "Première issue"));
+		return factory;
 	}
 	@Bean
 	public SpringTemplateEngine springTemplateEngine() {
