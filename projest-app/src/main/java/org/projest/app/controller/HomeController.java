@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import fr.uha.ensisa.gl.test.Issue;
 
 @Controller
 public class HomeController {
@@ -27,5 +28,12 @@ public class HomeController {
 		ModelAndView ret = new ModelAndView("list");                  // 1
 		ret.addObject("issues", repo.getIssueRepo().findAll());                      // 2
 		return ret;
+	}
+	@RequestMapping(value = "/create")
+	public String create(@RequestParam(required = true) String title) {     // 3
+		Issue newIssue = new Issue();
+		newIssue.setName(title);                                                // 4
+		repo.getIssueRepo().persist(newIssue);                                  // 5
+		return "redirect:/list";                                             // 6
 	}
 }
