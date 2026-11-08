@@ -84,7 +84,13 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.19.0</version>
 		</dependency>
-
+		<!-- Mockito -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.18.0</version>
+			<scope>test</scope>
+		</dependency>
 		<!-- Tests d'intégration : Selenium -->
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
@@ -117,6 +123,15 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<parameters>true</parameters>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>org/projest/app/config/**</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>

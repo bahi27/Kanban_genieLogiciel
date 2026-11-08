@@ -28,4 +28,7 @@ public class Issue {
 	public void setName(String name2) {
 		this.name = name2;
 	}
+	public void setId(long id) {
+		this.id = id  ; 
+	}
 }

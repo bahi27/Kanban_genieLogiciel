@@ -6,11 +6,16 @@ import java.util.TreeMap ;
 import java.util.Collections;
 import java.util.Collection ;
 public class IssueRepoMem implements IssueRepo{
+	private long nextId = 1; 
 	private final Map<Long, Issue>
 	store =Collections.synchronizedMap(new TreeMap<Long, Issue>());
 	@Override 
 	public void persist(Issue issue) {
-		store.put((long)issue.getId() , issue) ;
+		if (issue.getId() == 0) {                       // 1 : pas encore d'identifiant
+			issue.setId(nextId);                             // 2 : lui en donner un
+			nextId++;
+		}
+		store.put(issue.getId(), issue);
 	}
 	@Override
 	public void remove(long id) {

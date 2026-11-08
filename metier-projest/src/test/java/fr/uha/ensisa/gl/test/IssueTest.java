@@ -23,6 +23,12 @@ public class IssueTest {
 		sut.setName(name);
 		assertEquals(name, sut.getName());
 	}
+	@Test
+	@DisplayName("setId modifie l'identifiant")
+	void setId() {
+		sut.setId(5L);
+		assertEquals(5L, sut.getId());
+	}
 
 	@Test
 	@DisplayName("Un constructeur complet garde id et description")
