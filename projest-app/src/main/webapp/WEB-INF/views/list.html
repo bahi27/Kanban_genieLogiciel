@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Issues list</title>
+</head>
+<form th:action="@{/create}" method="POST" accept-charset="UTF-8">
+	<input type="text" name="title" id="title"><br>
+	<input type="submit" name="create" id="create" value="create">
+</form>
+<body>
+<ul id="issues">
+	<li th:each="issue : ${issues}" class="issue_row"
+		th:id="${'issue_' + issue.id}">[[${issue.name}]]</li>
+</ul>
+</body>
+</html>
