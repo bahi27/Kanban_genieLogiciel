@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class HelloIT {
@@ -20,9 +21,13 @@ public class HelloIT {
 		if (driver != null) return;
 		host = System.getProperty("host", "localhost");
 		port = System.getProperty("servlet.port", "8080");
-		WebDriverManager.firefoxdriver().setup();
+		try {
+			WebDriverManager.firefoxdriver().setup();
+		} catch (Exception e) {
+			// sur GitHub, Selenium Manager prend le relais
+		}
 		FirefoxOptions options = new FirefoxOptions();
-		if (System.getProperty("headless") != null) {
+		if (System.getProperty("headless") != null || System.getenv("CI") != null) {
 			options.addArguments("-headless");
 		}
 		driver = new FirefoxDriver(options);

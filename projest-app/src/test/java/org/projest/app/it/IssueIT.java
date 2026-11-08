@@ -1,7 +1,9 @@
 package org.projest.app.it;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
@@ -12,6 +14,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -25,9 +29,13 @@ public class IssueIT {
 		if (driver != null) return;
 		host = System.getProperty("host", "localhost");
 		port = System.getProperty("servlet.port", "8080");
-		WebDriverManager.firefoxdriver().setup();
+		try {
+			WebDriverManager.firefoxdriver().setup();
+		} catch (Exception e) {
+			// sur GitHub, Selenium Manager prend le relais
+		}
 		FirefoxOptions options = new FirefoxOptions();
-		if (System.getProperty("headless") != null) {
+		if (System.getProperty("headless") != null || System.getenv("CI") != null) {
 			options.addArguments("-headless");
 		}
 		driver = new FirefoxDriver(options);
@@ -36,8 +44,8 @@ public class IssueIT {
 	@AfterAll
 	static void shutdownWebDriver() {
 		if (driver != null) {
-			driver.quit() ; 
-			driver = null ; 
+			driver.quit();
+			driver = null;
 		}
 	}
 
@@ -48,14 +56,18 @@ public class IssueIT {
 	}
 
 	static List<WebElement> listIssues() {
-		driver.get(baseUrl() + "list");                              // 1
-		return driver.findElements(By.className("issue_row"));            // 2
+		driver.get(baseUrl() + "list");
+		return driver.findElements(By.className("issue_row"));
 	}
 
 	static void createIssue(String title) {
 		driver.get(baseUrl() + "list");
-		driver.findElement(By.id("title")).sendKeys(title);             // 3, 4
-		driver.findElement(By.id("create")).click();                   // 5
+		driver.findElement(By.id("title")).sendKeys(title);
+		WebElement button = driver.findElement(By.id("create"));
+		button.click();
+		// attendre que la page soit rechargée (l'ancien bouton disparaît)
+		new WebDriverWait(driver, Duration.ofSeconds(5))
+				.until(ExpectedConditions.stalenessOf(button));
 	}
 
 	// ----- tests -----
@@ -65,7 +77,7 @@ public class IssueIT {
 		String title = "issue-" + System.currentTimeMillis();
 		createIssue(title);
 		boolean found = listIssues().stream()
-				.anyMatch(e -> e.getText().equals(title));            // 6
+				.anyMatch(e -> e.getText().equals(title));
 		assertTrue(found, "L'issue créée n'apparaît pas dans la liste");
 	}
 
@@ -74,6 +86,6 @@ public class IssueIT {
 		int before = listIssues().size();
 		createIssue("autre-" + System.currentTimeMillis());
 		int after = listIssues().size();
-		assertEquals(before + 1, after);                          // 7
+		assertEquals(before + 1, after);
 	}
 }
